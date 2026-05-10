@@ -1,5 +1,5 @@
 # Intel-8080-Emulator
-A general purpose Intel 8080 Emulator. This emulator will not be cycle accurate, although I do plan to incorporate accurate cycle counting.
+A general purpose Intel 8080 Emulator. The purported goal of this project was to solidify my knowledge of computer architecture and assembly language while also serving as a stepping stone in my exploration of low-level computing.
 
 ![image](https://user-images.githubusercontent.com/78240770/225095819-6673ce86-0d1e-4a40-8f1f-d8e677db2520.png)
 ![image](https://user-images.githubusercontent.com/78240770/225095916-77c15eb7-0e1e-4995-8c57-849dad026941.png)
