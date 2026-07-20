@@ -1,7 +1,9 @@
 #pragma once
 #include <string>
+#include <cstring>
 #include <sstream>
 #include <cstdlib>
+#include <cstdint>
 #include <math.h>
 
 //		FLAGS register order
