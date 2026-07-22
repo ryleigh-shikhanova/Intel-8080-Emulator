@@ -1,5 +1,6 @@
 #ifndef CPU_STATE_H
 #define CPU_STATE_H
+
 /*
  * Mutable archietectural state of an Intel 8080 CPU.
  *
@@ -23,5 +24,4 @@ struct CpuState {
 
 	bool halted{};
 };
-
 #endif

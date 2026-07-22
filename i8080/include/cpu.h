@@ -1,5 +1,5 @@
-#ifndef I8080_CPU_H
-#define I8080_CPU_H
+#ifndef CPU_8080_H
+#define CPU_8080_H
 
 #include <cstdint>
 
@@ -15,4 +15,5 @@ public:
 private:
 
 };
+
 #endif
