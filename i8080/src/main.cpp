@@ -9,6 +9,6 @@ int main()
 	Cpu8080 i8080;
 	CpuState state;
 	Memory mem;
-
-	std::cout << "test" << std::endl;	
+	
+	std::cout << i8080.isFlagSet(Flag::Carry) << std::endl;	
 }
