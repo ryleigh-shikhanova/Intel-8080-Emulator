@@ -3,10 +3,11 @@
 
 #include <cstdint>
 #include "cpu_state.h"
+#include "memory.h"
 
 // Used to group the executed opcode along with it's t-states
 struct StepResult {
-	std::uint16_t address{}
+	std::uint16_t address{};
 	std::uint8_t opcode;
 	std::uint8_t tStates;
 };
@@ -14,8 +15,9 @@ struct StepResult {
 class Cpu8080 {
 
 public:
-	Cpu8080() {
-	
+	explicit Cpu8080(Memory& memory) 
+		: memory_(memory)
+	{
 	}
 	~Cpu8080() {
 
@@ -26,11 +28,14 @@ public:
 	{
 		return state_;
 	}
+	void restoreState(const CpuState& state);
+	void reset() noexcept;
+
 	[[nodiscard]] bool isFlagSet(Flag flag) const;
 	void setFlag(Flag flag, bool value);
 private:
-	std::uint8_t flags_ = 0x02;
 	CpuState state_{};
+	Memory& memory_;
 
 	void executeNOP() const noexcept;
 
