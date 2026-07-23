@@ -6,9 +6,7 @@
 
 int main() 
 {
-	Cpu8080 i8080;
-	CpuState state;
 	Memory mem;
-	
-	std::cout << i8080.isFlagSet(Flag::Carry) << std::endl;	
+	Cpu8080 i8080(mem);
+	std::cout << i8080.isFlagSet(Flag::Sign) << std::endl;	
 }

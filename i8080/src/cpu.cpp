@@ -1,7 +1,7 @@
 #include "../include/cpu.h"
 #include <iostream>
 
-bool Cpu8080::isFlagSet(Flag flag) const {
+[[nodiscard]] bool Cpu8080::isFlagSet(Flag flag) const {
 	const auto mask = static_cast<std::uint8_t>(flag);
 	return (flags_ & mask) != 0;
 }
