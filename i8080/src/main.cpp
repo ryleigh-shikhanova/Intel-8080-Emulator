@@ -1,8 +1,8 @@
 #include <iostream>
 
-#include "../include/cpu.h"
-#include "../include/cpu_state.h"
-#include "../include/memory.h"
+#include "cpu.h"
+#include "cpu_state.h"
+#include "memory.h"
 
 int main() 
 {

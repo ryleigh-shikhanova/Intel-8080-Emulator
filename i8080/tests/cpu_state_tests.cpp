@@ -1,8 +1,8 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include "../include/cpu.h"
-#include "../include/cpu_state.h"
-#include "../include/memory.h"
+#include "cpu.h"
+#include "cpu_state.h"
+#include "memory.h"
 
 TEST_CASE("Memory is initialized to zero")
 {

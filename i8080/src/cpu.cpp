@@ -1,4 +1,4 @@
-#include "../include/cpu.h"
+#include "cpu.h"
 #include <iostream>
 
 [[nodiscard]] bool Cpu8080::isFlagSet(Flag flag) const {
