@@ -3,15 +3,15 @@
 
 [[nodiscard]] bool Cpu8080::isFlagSet(Flag flag) const {
 	const auto mask = static_cast<std::uint8_t>(flag);
-	return (flags_ & mask) != 0;
+	return (state_.flags & mask) != 0;
 }
 
 void Cpu8080::setFlag(Flag flag, bool value) {
 	const auto mask = static_cast<std::uint8_t>(flag);
 	
 	if (value) {
-		flags_ |= mask;
+		state_.flags |= mask;
 	} else {
-		flags_ &= static_cast<std::uint8_t>(~mask);
+		state_.flags &= static_cast<std::uint8_t>(~mask);
 	}
 }
