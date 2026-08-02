@@ -15,8 +15,8 @@ struct StepResult {
 class Cpu8080 {
 
 public:
-	explicit Cpu8080(Memory& memory) 
-		: memory_(memory)
+	explicit Cpu8080(Memory& memory, CpuState& state) 
+		: memory_(memory), state_(state)
 	{
 	}
 	~Cpu8080() {
@@ -34,7 +34,7 @@ public:
 	[[nodiscard]] bool isFlagSet(Flag flag) const;
 	void setFlag(Flag flag, bool value);
 private:
-	CpuState state_{};
+	CpuState& state_;
 	Memory& memory_;
 
 	void executeNOP() const noexcept;
