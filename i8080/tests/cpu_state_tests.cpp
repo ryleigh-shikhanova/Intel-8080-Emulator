@@ -38,3 +38,56 @@ TEST_CASE("CPU construction preserves supplied state and memory")
 	REQUIRE(memory.read(0x1234) == 0xAB);
 	REQUIRE(state.pc == 0x1234);
 }
+
+TEST_CASE("CPU flags can be set and checked correctly")
+{
+	Memory memory;
+	CpuState state;
+	
+	Cpu8080 cpu{memory, state};
+
+	cpu.setFlag(Flag::Carry, true);
+	REQUIRE(cpu.isFlagSet(Flag::Carry));
+
+	cpu.setFlag(Flag::Parity, true);
+	REQUIRE(cpu.isFlagSet(Flag::Parity));
+
+	cpu.setFlag(Flag::AuxCarry, true);
+	REQUIRE(cpu.isFlagSet(Flag::AuxCarry));
+
+	cpu.setFlag(Flag::Zero, true);
+	REQUIRE(cpu.isFlagSet(Flag::Zero));
+
+	cpu.setFlag(Flag::Sign, true);
+	REQUIRE(cpu.isFlagSet(Flag::Sign));
+}
+
+TEST_CASE("CPU flags can be disabled correctly")
+{
+	Memory memory;
+	CpuState state;
+
+	Cpu8080 cpu{memory, state};
+
+	//First all flags will be enabled, then the flags register will be checked as they are disabled
+	cpu.setFlag(Flag::Carry, true);
+	cpu.setFlag(Flag::Parity, true);
+	cpu.setFlag(Flag::AuxCarry, true);
+	cpu.setFlag(Flag::Zero, true);
+	cpu.setFlag(Flag::Sign, true);
+
+	cpu.setFlag(Flag::Carry, false);
+	REQUIRE(!cpu.isFlagSet(Flag::Carry));
+
+	cpu.setFlag(Flag::Parity, false);
+	REQUIRE(!cpu.isFlagSet(Flag::Parity));
+
+	cpu.setFlag(Flag::AuxCarry, false);
+	REQUIRE(!cpu.isFlagSet(Flag::AuxCarry));
+
+	cpu.setFlag(Flag::Zero, false);
+	REQUIRE(!cpu.isFlagSet(Flag::Zero));
+
+	cpu.setFlag(Flag::Sign, false);
+	REQUIRE(!cpu.isFlagSet(Flag::Sign));
+}
