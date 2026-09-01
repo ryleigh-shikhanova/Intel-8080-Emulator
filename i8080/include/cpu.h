@@ -4,6 +4,7 @@
 #include <cstdint>
 #include "cpu_state.h"
 #include "memory.h"
+#include "i8080_opcode_table.h"
 
 // Used to group the executed opcode along with it's t-states
 struct StepResult {
@@ -14,6 +15,7 @@ struct StepResult {
 
 class Cpu8080 {
 
+//the cpu is given the state and memory. So, the memory should be created
 public:
 	explicit Cpu8080(Memory& memory, CpuState& state) 
 		: memory_(memory), state_(state)
