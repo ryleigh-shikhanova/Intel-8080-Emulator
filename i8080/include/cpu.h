@@ -20,16 +20,19 @@ public:
 	explicit Cpu8080(Memory& memory, CpuState& state) 
 		: memory_(memory), state_(state)
 	{
+		tstates_ = 0;
 	}
 	~Cpu8080() {
 
 	}
 	
+
 	[[nodiscard]] StepResult step();
 	[[nodiscard]] const CpuState& state() const noexcept
 	{
 		return state_;
 	}
+	void run();
 	void restoreState(const CpuState& state);
 	void reset() noexcept;
 
@@ -38,7 +41,7 @@ public:
 private:
 	CpuState& state_;
 	Memory& memory_;
-
+	tstates_;
 	void executeNOP() const noexcept;
 
 };
