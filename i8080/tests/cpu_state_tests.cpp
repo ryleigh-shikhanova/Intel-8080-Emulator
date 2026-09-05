@@ -91,3 +91,34 @@ TEST_CASE("CPU flags can be disabled correctly")
 	cpu.setFlag(Flag::Sign, false);
 	REQUIRE(!cpu.isFlagSet(Flag::Sign));
 }
+
+TEST_CASE("HLT halts the cpu and returns a 0 exit code")
+{
+	Memory memory;
+	CpuState state;
+
+	memory.write(0x0000, 0x76); //writes the halt instruction
+	state.pc = 0x00;
+
+	Cpu8080 cpu{memory, state};
+
+	auto exit_code = cpu.run();
+	REQUIRE(exit_code == 0);
+}
+
+TEST_CASE("NOP advances the program counter")
+{
+	Memory memory;
+	CpuState state;
+
+	memory.write(0x0000, 0x00);
+	state.pc = 0x00;
+
+	Cpu8080 cpu{memory, state};
+
+	auto result = cpu.step();
+
+	REQUIRE(state.pc == 0x0001);
+	REQUIRE(result.opcode == 0x00);
+	REQUIRE(result.tStates == 4);
+}

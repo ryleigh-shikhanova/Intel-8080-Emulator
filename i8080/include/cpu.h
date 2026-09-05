@@ -20,7 +20,6 @@ public:
 	explicit Cpu8080(Memory& memory, CpuState& state) 
 		: memory_(memory), state_(state)
 	{
-		tstates_ = 0;
 	}
 	~Cpu8080() {
 
@@ -32,7 +31,7 @@ public:
 	{
 		return state_;
 	}
-	void run();
+	int run();
 	void restoreState(const CpuState& state);
 	void reset() noexcept;
 
@@ -41,9 +40,9 @@ public:
 private:
 	CpuState& state_;
 	Memory& memory_;
-	tstates_;
+	std::uint64_t tstates_{0};
 	void executeNOP() const noexcept;
-
+	void executeHLT() const noexcept;
 };
 
 #endif
