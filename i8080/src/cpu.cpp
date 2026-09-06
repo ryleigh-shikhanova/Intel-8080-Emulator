@@ -95,3 +95,71 @@ void Cpu8080::executeNOP() const noexcept {
 void Cpu8080::executeHLT() const noexcept {
 	//
 }
+
+void Cpu8080::executeINR(Register reg) noexcept {
+	auto value = readRegister(reg);
+
+	//determine aux
+	value++;
+
+	writeRegister(reg, value);
+	//set flags
+}
+
+std::uint8_t Cpu8080::readRegister(Register reg) const noexcept{
+	std::uint8_t value{};
+	switch(reg){
+		case Register::A:
+			value = state_.a;
+			break;
+		case Register::B:
+			value = state_.b;
+			break;
+		case Register::C:
+			value = state_.c;
+			break;
+		case Register::D:
+			value = state_.d;
+			break;
+		case Register::E:
+			value = state_.e;
+			break;
+		case Register::H:
+			value = state_.h;
+			break;
+		case Register::L:
+			value = state_.l;
+			break;
+		case Register::M:
+			break;
+	}	
+	return value;
+}
+
+void Cpu8080::writeRegister(Register reg, std::uint8_t value) noexcept{
+	switch(reg){
+		case Register::A:
+			state_.a = value;
+			break;
+		case Register::B:
+			state_.b = value;
+			break;
+		case Register::C:
+			state_.c = value;
+			break;
+		case Register::D:
+			state_.d = value;
+			break;
+		case Register::E:
+			state_.e = value;
+			break;
+		case Register::H:
+			state_.h = value;
+			break;
+		case Register::L:
+			state_.l = value;
+			break;
+		case Register::M:
+			break;
+	}	
+}

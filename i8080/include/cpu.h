@@ -13,6 +13,23 @@ struct StepResult {
 	std::uint8_t tStates;
 };
 
+// The helper functions in this class accept the following registers:
+// 	A, B, C, D, E, L, and M.
+// 	M is the pseudo-register defined by the HL register pair
+enum Register {
+	A,	B,
+	C,	D,
+	E,	H,
+	L,	M,
+};
+
+// The helper functions in this class accept the following register pairs:
+// 	BC, DC, HL, and SP
+enum RegisterPair {
+	BC,	DC,
+	HL,	SP
+};
+
 class Cpu8080 {
 
 //the cpu is given the state and memory. So, the memory should be created
@@ -43,6 +60,11 @@ private:
 	std::uint64_t tstates_{0};
 	void executeNOP() const noexcept;
 	void executeHLT() const noexcept;
+	void executeINR(Register reg) noexcept;
+	void executeINX(RegisterPair reg) noexcept;
+
+	std::uint8_t readRegister(Register reg) const noexcept;
+	void writeRegister(Register reg, std::uint8_t value) noexcept;
 };
 
 #endif
