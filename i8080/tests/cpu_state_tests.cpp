@@ -122,3 +122,50 @@ TEST_CASE("NOP advances the program counter")
 	REQUIRE(result.opcode == 0x00);
 	REQUIRE(result.tStates == 4);
 }
+
+
+TEST_CASE("NOP* advance the program counter")
+{
+	Memory memory;
+	CpuState state;
+
+	memory.write(0x0000, 0x10);
+	memory.write(0x0001, 0x20);
+	memory.write(0x0002, 0x30);
+
+	memory.write(0x0003, 0x08);
+	memory.write(0x0004, 0x18);
+	memory.write(0x0005, 0x28);
+	memory.write(0x0006, 0x38);
+	state.pc = 0x00;
+
+	Cpu8080 cpu{memory, state};
+	
+	auto result = cpu.step();
+	REQUIRE(state.pc == 0x0001);
+	REQUIRE(result.opcode == 0x10);
+	
+	result = cpu.step();
+	REQUIRE(state.pc == 0x0002);
+	REQUIRE(result.opcode == 0x20);
+
+	result = cpu.step();
+	REQUIRE(state.pc == 0x0003);
+	REQUIRE(result.opcode == 0x30);
+
+	result = cpu.step();
+	REQUIRE(state.pc == 0x0004);
+	REQUIRE(result.opcode == 0x08);
+	
+	result = cpu.step();
+	REQUIRE(state.pc == 0x0005);
+	REQUIRE(result.opcode == 0x18);
+
+	result = cpu.step();
+	REQUIRE(state.pc == 0x0006);
+	REQUIRE(result.opcode == 0x28);
+
+	result = cpu.step();
+	REQUIRE(state.pc == 0x0007);
+	REQUIRE(result.opcode == 0x38);
+}

@@ -1,5 +1,6 @@
 #include "cpu.h"
 #include <iostream>
+#include <stdexcept>
 
 [[nodiscard]] StepResult Cpu8080::step() {
 	const OpcodeInfo& current_instruction = kOpcodeTable[memory_.read(state_.pc)];
@@ -10,13 +11,43 @@
 	//At this point we will add a function to perform moves-avoiding the switch
 	//Likewise, here we will add a function to perform arithmetic operations-avoiding the switch
 	switch (current_instruction.hex) {
-		case 0x00:
+		case 0x00:	//NOP
 			executeNOP();
 			state_.pc++;
 			break;
+		case 0x10:	//NOP*
+			executeNOP();
+			state_.pc++;
+			break;
+		case 0x20:	//NOP*
+			executeNOP();
+			state_.pc++;
+			break;
+		case 0x30:	//NOP*
+			executeNOP();
+			state_.pc++;
+			break;
+		case 0x08:	//NOP*
+			executeNOP();
+			state_.pc++;
+			break;
+		case 0x18:	//NOP*
+			executeNOP();
+			state_.pc++;
+			break;
+		case 0x28:	//NOP*
+			executeNOP();
+			state_.pc++;
+			break;
+		case 0x38:	//NOP*
+			executeNOP();
+			state_.pc++;
+			break;
+		case 0x76:	//HLT
+			//implement HLT
+			break;
 		default:
-			//Handle this Error later. However, based on the implementation of the opcode table,
-			//an error here (should) be impossible.
+			throw std::runtime_error("OPCODE not in lookup table");
 			break;
 	}
 	auto t_states = alternate_timing_taken
