@@ -108,12 +108,10 @@ void Cpu8080::executeHLT() const noexcept {
 
 void Cpu8080::executeINR(Register reg) noexcept {
 	auto value = readRegister(reg);
-
-	//determine aux
+	//todo: determine aux
 	value++;
-
 	writeRegister(reg, value);
-	//set flags
+	updateSZPFlags(value);
 }
 
 [[nodiscard]]
@@ -173,7 +171,7 @@ void Cpu8080::writeRegister(Register reg, std::uint8_t value) noexcept{
 
 [[nodiscard]]
 std::uint16_t Cpu8080::readRegisterPair(RegisterPair pair) const noexcept{
-	uint16_t value{};
+	std::uint16_t value{};
 	switch(pair){
 		case RegisterPair::BC:
 			value = (static_cast<std::uint16_t>(state_.b) << 8) 
@@ -206,3 +204,23 @@ void Cpu8080::writeRegisterPair(RegisterPair pair, std::uint16_t value) noexcept
 	}
 }
 
+[[nodiscard]]
+    bool Cpu8080::shouldSetZero(std::uint8_t value) noexcept{
+      return value == 0;
+    }
+
+  [[nodiscard]]
+    bool Cpu8080::shouldSetSign(std::uint8_t value) noexcept{
+      return (value & 0x80) != 0;
+    }
+
+  [[nodiscard]]
+    bool Cpu8080::shouldSetParity(std::uint8_t value) noexcept{
+      return (std::popcount(value) & 1) == 0;
+    }
+
+  void Cpu8080::updateSZPFlags(std::uint8_t value) noexcept{
+    setFlag(Flag::Zero, shouldSetZero(value));
+    setFlag(Flag::Sign, shouldSetSign(value));
+    setFlag(Flag::Parity, shouldSetParity(value));
+  }

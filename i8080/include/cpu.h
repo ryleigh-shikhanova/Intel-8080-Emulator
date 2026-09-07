@@ -2,6 +2,7 @@
 #define CPU_8080_H
 
 #include <cstdint>
+#include <bit>
 #include "cpu_state.h"
 #include "memory.h"
 #include "i8080_opcode_table.h"
@@ -81,6 +82,14 @@ private:
 	{
 		return static_cast<Register>(bits & 0x07);
 	}
+
+  [[nodiscard]]
+    bool shouldSetZero(std::uint8_t value) noexcept;
+  [[nodiscard]]
+    bool shouldSetSign(std::uint8_t value) noexcept;
+  [[nodiscard]]
+    bool shouldSetParity(std::uint8_t value) noexcept;
+  void updateSZPFlags(std::uint8_t value) noexcept;
 };
 
 #endif
