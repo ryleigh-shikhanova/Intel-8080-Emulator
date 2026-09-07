@@ -54,10 +54,10 @@
 				break;
 			case 0x76:	//HLT
 				executeHLT();
+        state_.pc++;
 				break;
 			default:
-				throw std::runtime_error("OPCODE not in lookup table");
-				break;
+				throw std::runtime_error("Opcode not implemented");
 		}
 	}
 	auto t_states = alternate_timing_taken
@@ -68,12 +68,13 @@
 	return step_result;
 }
 
-[[nodiscard]] bool Cpu8080::isFlagSet(Flag flag) const {
+[[nodiscard]]
+bool Cpu8080::isFlagSet(Flag flag) const noexcept {
 	const auto mask = static_cast<std::uint8_t>(flag);
 	return (state_.flags & mask) != 0;
 }
 
-void Cpu8080::setFlag(Flag flag, bool value) {
+void Cpu8080::setFlag(Flag flag, bool value) noexcept {
 	const auto mask = static_cast<std::uint8_t>(flag);
 	if (value) {
 		state_.flags |= mask;
@@ -181,15 +182,15 @@ std::uint16_t Cpu8080::readRegisterPair(RegisterPair pair) const noexcept{
 	switch(pair){
 		case RegisterPair::BC:
 			value = (static_cast<std::uint16_t>(state_.b) << 8) 
-				| state_.c;
+				      | state_.c;
 			break;
 		case RegisterPair::DE:
 			value = (static_cast<std::uint16_t>(state_.d) << 8) 
-				| state_.e;
+				      | state_.e;
 			break;
 		case RegisterPair::HL:
 			value = (static_cast<std::uint16_t>(state_.h) << 8) 
-				| state_.l;
+				      | state_.l;
 			break;
 		case RegisterPair::SP:
       value = state_.sp; 
@@ -236,7 +237,7 @@ void Cpu8080::writeRegisterPair(RegisterPair pair, std::uint16_t value) noexcept
     }
   
   void Cpu8080::updateSZPFlags(std::uint8_t value) noexcept{
-    setFlag(Flag::Zero, shouldSetZero(value));
-    setFlag(Flag::Sign, shouldSetSign(value));
+    setFlag(Flag::Zero,   shouldSetZero(value));
+    setFlag(Flag::Sign,   shouldSetSign(value));
     setFlag(Flag::Parity, shouldSetParity(value));
   }

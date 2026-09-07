@@ -10,15 +10,15 @@
 // Used to group the executed opcode along with it's t-states
 struct StepResult {
 	std::uint16_t address{};
-	std::uint8_t opcode;
-	std::uint8_t tStates;
+	std::uint8_t opcode{};
+	std::uint8_t tStates{};
 };
 
 // The helper functions in this class accept the following registers:
-// 	A, B, C, D, E, L, and M.
+// 	A, B, C, D, E, L, H, and M.
 // 	M is the pseudo-register defined by the HL register pair
 // 	These registers are mapped to an integer as defined by the 8080 hardware spec.
-enum Register {
+enum Register : std::uint8_t {
 	B = 0,
 	C = 1,
 	D = 2,
@@ -30,10 +30,12 @@ enum Register {
 };
 
 // The helper functions in this class accept the following register pairs:
-// 	BC, DC, HL, and SP
-enum RegisterPair {
-	BC,	DE,
-	HL,	SP
+// 	BC, DE, HL, and SP
+enum RegisterPair : std::uint8_t {
+	BC = 0,
+  DE = 1,
+  HL = 2,
+  SP = 3
 };
 
 class Cpu8080 {
@@ -44,13 +46,11 @@ public:
 		: memory_(memory), state_(state)
 	{
 	}
-	~Cpu8080() {
-
-	}
 	
-
-	[[nodiscard]] StepResult step();
-	[[nodiscard]] const CpuState& state() const noexcept
+	[[nodiscard]]
+    StepResult step();
+	[[nodiscard]]
+    const CpuState& state() const noexcept
 	{
 		return state_;
 	}
@@ -58,8 +58,10 @@ public:
 	void restoreState(const CpuState& state);
 	void reset() noexcept;
 
-	[[nodiscard]] bool isFlagSet(Flag flag) const;
-	void setFlag(Flag flag, bool value);
+	[[nodiscard]]
+    bool isFlagSet(Flag flag) const noexcept;
+	void setFlag(Flag flag, bool value) noexcept;
+
 private:
 	CpuState& state_;
 	Memory& memory_;
@@ -84,11 +86,11 @@ private:
 	}
 
   [[nodiscard]]
-    bool shouldSetZero(std::uint8_t value) noexcept;
+    static bool shouldSetZero(std::uint8_t value) noexcept;
   [[nodiscard]]
-    bool shouldSetSign(std::uint8_t value) noexcept;
+    static bool shouldSetSign(std::uint8_t value) noexcept;
   [[nodiscard]]
-    bool shouldSetParity(std::uint8_t value) noexcept;
+    static bool shouldSetParity(std::uint8_t value) noexcept;
   void updateSZPFlags(std::uint8_t value) noexcept;
 };
 
