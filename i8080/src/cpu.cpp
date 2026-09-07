@@ -53,7 +53,7 @@
 				state_.pc++;
 				break;
 			case 0x76:	//HLT
-				//implement HLT
+				executeHLT();
 				break;
 			default:
 				throw std::runtime_error("OPCODE not in lookup table");
@@ -75,7 +75,6 @@
 
 void Cpu8080::setFlag(Flag flag, bool value) {
 	const auto mask = static_cast<std::uint8_t>(flag);
-	
 	if (value) {
 		state_.flags |= mask;
 	} else {
@@ -99,16 +98,17 @@ int Cpu8080::run() {
 }
 
 void Cpu8080::executeNOP() const noexcept {
-	//NOP does nothing
+	//when logging is implemented this function will simply
+  //  write to the log
 }
 
 void Cpu8080::executeHLT() const noexcept {
-	//
+  state_.halted = true;
 }
 
 void Cpu8080::executeINR(Register reg) noexcept {
 	auto value = readRegister(reg);
-	//todo: determine aux
+  setFlag(Flag::AuxCarry, (value & 0x0F) == 0x0F);
 	value++;
 	writeRegister(reg, value);
 	updateSZPFlags(value);
@@ -139,6 +139,9 @@ std::uint8_t Cpu8080::readRegister(Register reg) const noexcept{
 		case Register::L:
 			value = state_.l;
 			break;
+    case Register::M:
+      value = memory_.read(readRegisterPair(RegisterPair::HL));
+      break;
 	}	
 	return value;
 }
@@ -166,6 +169,9 @@ void Cpu8080::writeRegister(Register reg, std::uint8_t value) noexcept{
 		case Register::L:
 			state_.l = value;
 			break;
+    case Register::M:
+      memory_.write(readRegisterPair(RegisterPair::HL), value);
+      break;
 	}	
 }
 
@@ -186,20 +192,30 @@ std::uint16_t Cpu8080::readRegisterPair(RegisterPair pair) const noexcept{
 				| state_.l;
 			break;
 		case RegisterPair::SP:
+      value = state_.sp; 
 			break;
 	}
 	return value;
 }
 
 void Cpu8080::writeRegisterPair(RegisterPair pair, std::uint16_t value) noexcept{
-	switch(pair){
+	const auto high = static_cast<std::uint8_t>(value >> 8);
+  const auto low =  static_cast<std::uint8_t>(value & 0xFF);
+  switch(pair){
 		case RegisterPair::BC:
+      state_.b = high;
+      state_.c = low;
 			break;
 		case RegisterPair::DE:
+      state_.d = high;
+      state_.e = low;
 			break;
 		case RegisterPair::HL:
+      state_.h = high;
+      state_.l = low;
 			break;
 		case RegisterPair::SP:
+      state_.sp = value;
 			break;
 	}
 }
@@ -218,7 +234,7 @@ void Cpu8080::writeRegisterPair(RegisterPair pair, std::uint16_t value) noexcept
     bool Cpu8080::shouldSetParity(std::uint8_t value) noexcept{
       return (std::popcount(value) & 1) == 0;
     }
-
+  
   void Cpu8080::updateSZPFlags(std::uint8_t value) noexcept{
     setFlag(Flag::Zero, shouldSetZero(value));
     setFlag(Flag::Sign, shouldSetSign(value));
