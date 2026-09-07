@@ -106,6 +106,22 @@ TEST_CASE("HLT halts the cpu and returns a 0 exit code")
 	REQUIRE(exit_code == 0);
 }
 
+TEST_CASE("INR B increments register B correctly")
+{
+	Memory memory;
+	CpuState state;
+
+	memory.write(0x0000, 0x04);
+	state.pc = 0x00;
+
+	Cpu8080 cpu{memory, state};
+
+	auto result = cpu.step();
+
+	REQUIRE(state.pc == 0x0001);
+	REQUIRE(state.b == 0x01);
+}
+
 TEST_CASE("NOP advances the program counter")
 {
 	Memory memory;

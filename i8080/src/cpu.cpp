@@ -4,51 +4,61 @@
 
 [[nodiscard]] StepResult Cpu8080::step() {
 	const OpcodeInfo& current_instruction = kOpcodeTable[memory_.read(state_.pc)];
+	auto opcode = current_instruction.hex;
 	StepResult step_result;
 	step_result.address = state_.pc;
-	step_result.opcode = current_instruction.hex;
+	step_result.opcode = opcode;
 	bool alternate_timing_taken = false;
+
 	//At this point we will add a function to perform moves-avoiding the switch
 	//Likewise, here we will add a function to perform arithmetic operations-avoiding the switch
-	switch (current_instruction.hex) {
-		case 0x00:	//NOP
-			executeNOP();
-			state_.pc++;
-			break;
-		case 0x10:	//NOP*
-			executeNOP();
-			state_.pc++;
-			break;
-		case 0x20:	//NOP*
-			executeNOP();
-			state_.pc++;
-			break;
-		case 0x30:	//NOP*
-			executeNOP();
-			state_.pc++;
-			break;
-		case 0x08:	//NOP*
-			executeNOP();
-			state_.pc++;
-			break;
-		case 0x18:	//NOP*
-			executeNOP();
-			state_.pc++;
-			break;
-		case 0x28:	//NOP*
-			executeNOP();
-			state_.pc++;
-			break;
-		case 0x38:	//NOP*
-			executeNOP();
-			state_.pc++;
-			break;
-		case 0x76:	//HLT
-			//implement HLT
-			break;
-		default:
-			throw std::runtime_error("OPCODE not in lookup table");
-			break;
+	if ((opcode & 0xC7) == 0x04){
+		//This mask represents the INR instructions
+		auto reg = decodeRegister((opcode >> 3) & 0x07);
+		executeINR(reg);
+		state_.pc++;
+	}
+	else{
+		switch (opcode) {
+			case 0x00:	//NOP
+				executeNOP();
+				state_.pc++;
+				break;
+			case 0x10:	//NOP*
+				executeNOP();
+				state_.pc++;
+				break;
+			case 0x20:	//NOP*
+				executeNOP();
+				state_.pc++;
+				break;
+			case 0x30:	//NOP*
+				executeNOP();
+				state_.pc++;
+				break;
+			case 0x08:	//NOP*
+				executeNOP();
+				state_.pc++;
+				break;
+			case 0x18:	//NOP*
+				executeNOP();
+				state_.pc++;
+				break;
+			case 0x28:	//NOP*
+				executeNOP();
+				state_.pc++;
+				break;
+			case 0x38:	//NOP*
+				executeNOP();
+				state_.pc++;
+				break;
+			case 0x76:	//HLT
+				//implement HLT
+				break;
+			default:
+				throw std::runtime_error("OPCODE not in lookup table");
+				break;
+		}
 	}
 	auto t_states = alternate_timing_taken
 		? current_instruction.t_states_taken
@@ -106,6 +116,7 @@ void Cpu8080::executeINR(Register reg) noexcept {
 	//set flags
 }
 
+[[nodiscard]]
 std::uint8_t Cpu8080::readRegister(Register reg) const noexcept{
 	std::uint8_t value{};
 	switch(reg){
@@ -129,8 +140,6 @@ std::uint8_t Cpu8080::readRegister(Register reg) const noexcept{
 			break;
 		case Register::L:
 			value = state_.l;
-			break;
-		case Register::M:
 			break;
 	}	
 	return value;
@@ -159,7 +168,41 @@ void Cpu8080::writeRegister(Register reg, std::uint8_t value) noexcept{
 		case Register::L:
 			state_.l = value;
 			break;
-		case Register::M:
-			break;
 	}	
 }
+
+[[nodiscard]]
+std::uint16_t Cpu8080::readRegisterPair(RegisterPair pair) const noexcept{
+	uint16_t value{};
+	switch(pair){
+		case RegisterPair::BC:
+			value = (static_cast<std::uint16_t>(state_.b) << 8) 
+				| state_.c;
+			break;
+		case RegisterPair::DE:
+			value = (static_cast<std::uint16_t>(state_.d) << 8) 
+				| state_.e;
+			break;
+		case RegisterPair::HL:
+			value = (static_cast<std::uint16_t>(state_.h) << 8) 
+				| state_.l;
+			break;
+		case RegisterPair::SP:
+			break;
+	}
+	return value;
+}
+
+void Cpu8080::writeRegisterPair(RegisterPair pair, std::uint16_t value) noexcept{
+	switch(pair){
+		case RegisterPair::BC:
+			break;
+		case RegisterPair::DE:
+			break;
+		case RegisterPair::HL:
+			break;
+		case RegisterPair::SP:
+			break;
+	}
+}
+
