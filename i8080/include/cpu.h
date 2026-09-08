@@ -48,9 +48,10 @@ public:
 	}
 	
 	[[nodiscard]]
-    StepResult step();
+  StepResult step();
+
 	[[nodiscard]]
-    const CpuState& state() const noexcept
+  const CpuState& state() const noexcept
 	{
 		return state_;
 	}
@@ -59,7 +60,7 @@ public:
 	void reset() noexcept;
 
 	[[nodiscard]]
-    bool isFlagSet(Flag flag) const noexcept;
+  bool isFlagSet(Flag flag) const noexcept;
 	void setFlag(Flag flag, bool value) noexcept;
 
 private:
@@ -70,6 +71,7 @@ private:
 	void executeHLT() const noexcept;
 	void executeINR(Register reg) noexcept;
 	void executeINX(RegisterPair reg) noexcept;
+  void executeMOV(Register dst, Register src) noexcept;
 	
 	[[nodiscard]]
 	std::uint8_t readRegister(Register reg) const noexcept;

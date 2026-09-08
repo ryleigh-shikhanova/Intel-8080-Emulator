@@ -9,10 +9,13 @@
 	step_result.address = state_.pc;
 	step_result.opcode = opcode;
 	bool alternate_timing_taken = false;
-
-	//At this point we will add a function to perform moves-avoiding the switch
-	//Likewise, here we will add a function to perform arithmetic operations-avoiding the switch
-	if ((opcode & 0xC7) == 0x04){
+  
+  if ((opcode & 0xC7) == 0x00){
+    //This mask represents the NOP instructions
+    executeNOP();
+    state_.pc++;
+  }
+  else if ((opcode & 0xC7) == 0x04){
 		//This mask represents the INR instructions
 		auto reg = decodeRegister((opcode >> 3) & 0x07);
 		executeINR(reg);
@@ -24,40 +27,15 @@
     executeINX(reg);
     state_.pc++;
   }
+  else if ((opcode & 0xC0) == 0x40 && opcode != 0x76){
+    //This mask represents the MOV instructions
+    auto dst = decodeRegister((opcode >> 3) & 0x07);
+    auto src = decodeRegister((opcode & 0x07));
+    executeMOV(dst, src);
+    state_.pc++;
+  }
 	else{
 		switch (opcode) {
-			case 0x00:	//NOP
-				executeNOP();
-				state_.pc++;
-				break;
-			case 0x10:	//NOP*
-				executeNOP();
-				state_.pc++;
-				break;
-			case 0x20:	//NOP*
-				executeNOP();
-				state_.pc++;
-				break;
-			case 0x30:	//NOP*
-				executeNOP();
-				state_.pc++;
-				break;
-			case 0x08:	//NOP*
-				executeNOP();
-				state_.pc++;
-				break;
-			case 0x18:	//NOP*
-				executeNOP();
-				state_.pc++;
-				break;
-			case 0x28:	//NOP*
-				executeNOP();
-				state_.pc++;
-				break;
-			case 0x38:	//NOP*
-				executeNOP();
-				state_.pc++;
-				break;
 			case 0x76:	//HLT
 				executeHLT();
         state_.pc++;
@@ -115,7 +93,7 @@ void Cpu8080::executeHLT() const noexcept {
 
 void Cpu8080::executeINR(Register reg) noexcept {
 	auto value = readRegister(reg);
-    setFlag(Flag::AuxCarry, (value & 0x0F) == 0x0F);
+  setFlag(Flag::AuxCarry, (value & 0x0F) == 0x0F);
 	value++;
 	writeRegister(reg, value);
 	updateSZPFlags(value);
@@ -123,10 +101,13 @@ void Cpu8080::executeINR(Register reg) noexcept {
 
 void Cpu8080::executeINX(RegisterPair reg) noexcept {
   auto value = readRegisterPair(reg);
-  //setFlag(Flag::AuxCarry, );
   value++;
   writeRegisterPair(reg, value);
-  updateSZPFlags(value);
+}
+
+void Cpu8080::executeMOV(Register dst, Register src) noexcept {
+  auto value = readRegister(src);
+  writeRegister(dst, value);
 }
 
 [[nodiscard]]
@@ -154,9 +135,9 @@ std::uint8_t Cpu8080::readRegister(Register reg) const noexcept{
 		case Register::L:
 			value = state_.l;
 			break;
-    	case Register::M:
-      		value = memory_.read(readRegisterPair(RegisterPair::HL));
-      		break;
+    case Register::M:
+      value = memory_.read(readRegisterPair(RegisterPair::HL));
+      break;
 	}	
 	return value;
 }
@@ -184,9 +165,9 @@ void Cpu8080::writeRegister(Register reg, std::uint8_t value) noexcept{
 		case Register::L:
 			state_.l = value;
 			break;
-    	case Register::M:
-      		memory_.write(readRegisterPair(RegisterPair::HL), value);
-      		break;
+    case Register::M:
+      memory_.write(readRegisterPair(RegisterPair::HL), value);
+      break;
 	}	
 }
 
@@ -214,28 +195,28 @@ std::uint16_t Cpu8080::readRegisterPair(RegisterPair pair) const noexcept{
 }
 
 void Cpu8080::writeRegisterPair(RegisterPair pair, std::uint16_t value) noexcept{
-	const auto high = static_cast<std::uint8_t>(value >> 8);
+	  const auto high = static_cast<std::uint8_t>(value >> 8);
   	const auto low =  static_cast<std::uint8_t>(value & 0xFF);
   	switch(pair){
 		case RegisterPair::BC:
       		state_.b = high;
       		state_.c = low;
-			break;
+		    	break;
 		case RegisterPair::DE:
       		state_.d = high;
       		state_.e = low;
-			break;
+		    	break;
 		case RegisterPair::HL:
       		state_.h = high;
       		state_.l = low;
-			break;
+			    break;
 		case RegisterPair::SP:
       		state_.sp = value;
-			break;
+			    break;
 	}
 }
 
-[[nodiscard]]
+    [[nodiscard]]
     bool Cpu8080::shouldSetZero(std::uint8_t value) noexcept{
       return value == 0;
     }
