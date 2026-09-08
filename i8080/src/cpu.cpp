@@ -18,6 +18,12 @@
 		executeINR(reg);
 		state_.pc++;
 	}
+  else if ((opcode & 0xCF) == 0x03) {
+    //This mask represents the INX instructions
+    auto reg = decodeRegisterPair(opcode);
+    executeINX(reg);
+    state_.pc++;
+  }
 	else{
 		switch (opcode) {
 			case 0x00:	//NOP
@@ -113,6 +119,14 @@ void Cpu8080::executeINR(Register reg) noexcept {
 	value++;
 	writeRegister(reg, value);
 	updateSZPFlags(value);
+}
+
+void Cpu8080::executeINX(RegisterPair reg) noexcept {
+  auto value = readRegisterPair(reg);
+  //setFlag(Flag::AuxCarry, );
+  value++;
+  writeRegisterPair(reg, value);
+  updateSZPFlags(value);
 }
 
 [[nodiscard]]

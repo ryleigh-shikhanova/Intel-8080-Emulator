@@ -80,10 +80,16 @@ private:
 	void writeRegisterPair(RegisterPair pair, std::uint16_t value) noexcept;
 
 	[[nodiscard]]
-	constexpr Register decodeRegister(std::uint8_t bits) noexcept
+	constexpr Register decodeRegister(std::uint8_t opcode) noexcept
 	{
-		return static_cast<Register>(bits & 0x07);
+		return static_cast<Register>(opcode & 0x07);
 	}
+
+  [[nodiscard]]
+  constexpr RegisterPair decodeRegisterPair(std::uint8_t opcode) noexcept
+  {
+    return static_cast<RegisterPair>((opcode & 0x30) >> 4);
+  }
 
   [[nodiscard]]
     static bool shouldSetZero(std::uint8_t value) noexcept;
