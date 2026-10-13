@@ -34,12 +34,137 @@
     executeMOV(dst, src);
     state_.pc++;
   }
+  else if ((opcode & 0xC7) == 0x05){
+    //This mask represents the DCR instructions
+    throw std::runtime_error("Opcode not implemented");
+  }
+  else if ((opcode & 0xCF) == 0x0B){
+    //This mask represents the DCX instructions
+    throw std::runtime_error("Opcode not implemented");
+  }
+  else if ((opcode & 0xC7) == 0x06){
+    //This mask represents the MVI instructions
+    throw std::runtime_error("Opcode not implemented");
+  }
+  else if ((opcode & 0xCF) == 0x01){
+    //This mask represents the LXI instructions
+    throw std::runtime_error("Opcode not implemented");
+  }
+  else if ((opcode & 0xCF) == 0x09){
+    //This mask represents the DAD instructions
+    throw std::runtime_error("Opcode not implemented");
+  }
+  else if ((opcode & 0xEF) == 0x02){
+    //This mask represents the STAX instructions (B and D only)
+    throw std::runtime_error("Opcode not implemented");
+  }
+  else if ((opcode & 0xEF) == 0x0A){
+    //This mask represents the LDAX instructions (B and D only)
+    throw std::runtime_error("Opcode not implemented");
+  }
+  else if ((opcode & 0xF8) == 0x80){
+    //This mask represents the ADD instructions
+    throw std::runtime_error("Opcode not implemented");
+  }
+  else if ((opcode & 0xF8) == 0x88){
+    //This mask represents the ADC instructions
+    throw std::runtime_error("Opcode not implemented");
+  }
+  else if ((opcode & 0xF8) == 0x90){
+    //This mask represents the SUB instructions
+    throw std::runtime_error("Opcode not implemented");
+  }
+  else if ((opcode & 0xF8) == 0x98){
+    //This mask represents the SBB instructions
+    throw std::runtime_error("Opcode not implemented");
+  }
+  else if ((opcode & 0xF8) == 0xA0){
+    //This mask represents the ANA instructions
+    throw std::runtime_error("Opcode not implemented");
+  }
+  else if ((opcode & 0xF8) == 0xA8){
+    //This mask represents the XRA instructions
+    throw std::runtime_error("Opcode not implemented");
+  }
+  else if ((opcode & 0xF8) == 0xB0){
+    //This mask represents the ORA instructions
+    throw std::runtime_error("Opcode not implemented");
+  }
+  else if ((opcode & 0xF8) == 0xB8){
+    //This mask represents the CMP instructions
+    throw std::runtime_error("Opcode not implemented");
+  }
+  else if ((opcode & 0xC7) == 0xC0){
+    //This mask represents the conditional return (Rcc) instructions
+    throw std::runtime_error("Opcode not implemented");
+  }
+  else if ((opcode & 0xC7) == 0xC2){
+    //This mask represents the conditional jump (Jcc) instructions
+    throw std::runtime_error("Opcode not implemented");
+  }
+  else if ((opcode & 0xC7) == 0xC4){
+    //This mask represents the conditional call (Ccc) instructions
+    throw std::runtime_error("Opcode not implemented");
+  }
+  else if ((opcode & 0xCF) == 0xC1){
+    //This mask represents the POP instructions (pair 3 is PSW, not SP)
+    throw std::runtime_error("Opcode not implemented");
+  }
+  else if ((opcode & 0xCF) == 0xC5){
+    //This mask represents the PUSH instructions (pair 3 is PSW, not SP)
+    throw std::runtime_error("Opcode not implemented");
+  }
+  else if ((opcode & 0xC7) == 0xC7){
+    //This mask represents the RST instructions
+    throw std::runtime_error("Opcode not implemented");
+  }
+  else if ((opcode & 0xF7) == 0xC3){
+    //This mask represents the JMP instructions (0xC3 and JMP* 0xCB)
+    throw std::runtime_error("Opcode not implemented");
+  }
+  else if ((opcode & 0xEF) == 0xC9){
+    //This mask represents the RET instructions (0xC9 and RET* 0xD9)
+    throw std::runtime_error("Opcode not implemented");
+  }
+  else if ((opcode & 0xCF) == 0xCD){
+    //This mask represents the CALL instructions (0xCD and CALL* 0xDD, 0xED, 0xFD)
+    throw std::runtime_error("Opcode not implemented");
+  }
 	else{
 		switch (opcode) {
 			case 0x76:	//HLT
 				executeHLT();
         state_.pc++;
 				break;
+      case 0x22:  //SHLD
+      case 0x2A:  //LHLD
+      case 0x32:  //STA
+      case 0x3A:  //LDA
+      case 0x07:  //RLC
+      case 0x0F:  //RRC
+      case 0x17:  //RAL
+      case 0x1F:  //RAR
+      case 0x27:  //DAA
+      case 0x2F:  //CMA
+      case 0x37:  //STC
+      case 0x3F:  //CMC
+      case 0xC6:  //ADI
+      case 0xCE:  //ACI
+      case 0xD6:  //SUI
+      case 0xDE:  //SBI
+      case 0xE6:  //ANI
+      case 0xEE:  //XRI
+      case 0xF6:  //ORI
+      case 0xFE:  //CPI
+      case 0xD3:  //OUT
+      case 0xDB:  //IN
+      case 0xE3:  //XTHL
+      case 0xEB:  //XCHG
+      case 0xE9:  //PCHL
+      case 0xF9:  //SPHL
+      case 0xF3:  //DI
+      case 0xFB:  //EI
+        throw std::runtime_error("Opcode not implemented");
 			default:
 				throw std::runtime_error("Opcode not implemented");
 		}
