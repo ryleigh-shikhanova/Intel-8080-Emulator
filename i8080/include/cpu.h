@@ -31,11 +31,20 @@ enum Register : std::uint8_t {
 
 // The helper functions in this class accept the following register pairs:
 // 	BC, DE, HL, and SP
-enum RegisterPair : std::uint8_t {
+//  PUSH/POP decode RP = 3 (0b11) as PSW, not SP. Use StackPair for those.
+enum class RegisterPair : std::uint8_t {
 	BC = 0,
-  DE = 1,
-  HL = 2,
-  SP = 3
+	DE = 1,
+	HL = 2,
+	SP = 3
+};
+
+// For use with the stack instructions
+enum class StackPair : std::uint8_t {
+	BC  = 0,
+	DE  = 1,
+	HL  = 2,
+	PSW = 3
 };
 
 class Cpu8080 {
