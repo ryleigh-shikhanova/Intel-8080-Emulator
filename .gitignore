@@ -42,6 +42,7 @@ core.*
 
 # IDE and operating-system metadata
 .vs/
+.vscode/
 .idea/
 .DS_Store
 Thumbs.db
