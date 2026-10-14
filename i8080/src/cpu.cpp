@@ -34,12 +34,108 @@
     executeMOV(dst, src);
     state_.pc++;
   }
+  else if ((opcode & 0xC7) == 0x05){
+    //This mask represents the DCR instructions
+    throw std::runtime_error("DCR not implemented");
+  }
+  else if ((opcode & 0xCF) == 0x0B){
+    //This mask represents the DCX instructions
+    throw std::runtime_error("DCX not implemented");
+  }
+  else if ((opcode & 0xC7) == 0x06){
+    //This mask represents the MVI instructions
+    throw std::runtime_error("MVI not implemented");
+  }
+  else if ((opcode & 0xCF) == 0x01){
+    //This mask represents the LXI instructions
+    throw std::runtime_error("LXI not implemented");
+  }
+  else if ((opcode & 0xCF) == 0x09){
+    //This mask represents the DAD instructions
+    throw std::runtime_error("DAD not implemented");
+  }
+  else if ((opcode & 0xEF) == 0x02){
+    //This mask represents the STAX instructions (B and D only)
+    throw std::runtime_error("STAX not implemented");
+  }
+  else if ((opcode & 0xEF) == 0x0A){
+    //This mask represents the LDAX instructions (B and D only)
+    throw std::runtime_error("LDAX not implemented");
+  }
+  else if ((opcode & 0xC0) == 0x80){
+    //This mask represents the register ALU instructions:
+    //  ADD, ADC, SUB, SBB, ANA, XRA, ORA, CMP
+    //  bits 5-3 select the operation, bits 2-0 select the source register
+    throw std::runtime_error("ALU register instructions not implemented");
+  }
+  else if ((opcode & 0xC7) == 0xC6){
+    //This mask represents the immediate ALU instructions:
+    //  ADI, ACI, SUI, SBI, ANI, XRI, ORI, CPI
+    //  bits 5-3 select the operation
+    throw std::runtime_error("ALU immediate instructions not implemented");
+  }
+  else if ((opcode & 0xC7) == 0xC0){
+    //This mask represents the conditional return instructions (Rcc)
+    //  bits 5-3 select the condition
+    throw std::runtime_error("Rcc not implemented");
+  }
+  else if ((opcode & 0xC7) == 0xC2){
+    //This mask represents the conditional jump instructions (Jcc)
+    //  bits 5-3 select the condition
+    throw std::runtime_error("Jcc not implemented");
+  }
+  else if ((opcode & 0xC7) == 0xC4){
+    //This mask represents the conditional call instructions (Ccc)
+    //  bits 5-3 select the condition
+    throw std::runtime_error("Ccc not implemented");
+  }
+  else if ((opcode & 0xCF) == 0xC1){
+    //This mask represents the POP instructions (register pair 3 is PSW, not SP)
+    throw std::runtime_error("POP not implemented");
+  }
+  else if ((opcode & 0xCF) == 0xC5){
+    //This mask represents the PUSH instructions (register pair 3 is PSW, not SP)
+    throw std::runtime_error("PUSH not implemented");
+  }
+  else if ((opcode & 0xC7) == 0xC7){
+    //This mask represents the RST instructions
+    //  bits 5-3 select the restart vector
+    throw std::runtime_error("RST not implemented");
+  }
 	else{
 		switch (opcode) {
 			case 0x76:	//HLT
 				executeHLT();
         state_.pc++;
 				break;
+		case 0x07:	//RLC
+		case 0x0F:	//RRC
+		case 0x17:	//RAL
+		case 0x1F:	//RAR
+		case 0x22:	//SHLD
+		case 0x27:	//DAA
+		case 0x2A:	//LHLD
+		case 0x2F:	//CMA
+		case 0x32:	//STA
+		case 0x37:	//STC
+		case 0x3A:	//LDA
+		case 0x3F:	//CMC
+		case 0xC3:	//JMP
+		case 0xCB:	//JMP*
+		case 0xC9:	//RET
+		case 0xD9:	//RET*
+		case 0xCD:	//CALL
+		case 0xDD:	//CALL*
+		case 0xED:	//CALL*
+		case 0xFD:	//CALL*
+		case 0xD3:	//OUT
+		case 0xDB:	//IN
+		case 0xE3:	//XTHL
+		case 0xE9:	//PCHL
+		case 0xEB:	//XCHG
+		case 0xF3:	//DI
+		case 0xF9:	//SPHL
+		case 0xFB:	//EI
 			default:
 				throw std::runtime_error("Opcode not implemented");
 		}

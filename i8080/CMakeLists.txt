@@ -1,11 +1,3 @@
-cmake_minimum_required(VERSION 3.20)
-
-project(Intel8080Emulator LANGUAGES CXX)
-
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-
 # Emulator core
 add_library(i8080_core
     src/cpu.cpp
@@ -29,10 +21,16 @@ target_link_libraries(i8080
 )
 
 # Unit tests
-include(CTest)
-
 if(BUILD_TESTING)
-    find_package(Catch2 3 REQUIRED)
+    include(FetchContent)
+    FetchContent_Declare(
+        Catch2
+        GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+        GIT_TAG        v3.8.1
+        GIT_SHALLOW    TRUE
+    )
+    FetchContent_MakeAvailable(Catch2)
+    list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 
     add_executable(i8080_tests
         tests/arithmetic_tests.cpp
