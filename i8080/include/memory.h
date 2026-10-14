@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <array>
+#include <span>
 
 class Memory {
 public:
@@ -16,6 +17,10 @@ public:
 	void clear() noexcept {
 		data_.fill(0);
 	}
+
+	// Copies bytes into memory starting at address. Throws std::out_of_range
+	// if the block would run past the end of the 64K address space.
+	void load(std::uint16_t address, std::span<const std::uint8_t> bytes);
 
 private:
 	std::array<std::uint8_t, 0x10000> data_{};

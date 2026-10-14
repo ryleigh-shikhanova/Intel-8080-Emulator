@@ -72,7 +72,7 @@ int Cpu8080::run() {
 	StepResult step_result{};
 	bool running = true;
 	int exit_state = -1;
-	while(running){
+	while(!state_.halted){
 		step_result = step();
 		if (step_result.opcode == 0x76){
 			exit_state = 0;

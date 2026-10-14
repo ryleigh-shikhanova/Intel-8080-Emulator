@@ -10,6 +10,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_library(i8080_core
     src/cpu.cpp
     src/memory.cpp
+    src/rom_loader.cpp
 )
 
 target_include_directories(i8080_core
