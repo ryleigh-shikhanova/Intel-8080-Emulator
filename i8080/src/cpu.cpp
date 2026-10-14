@@ -3,36 +3,29 @@
 #include <stdexcept>
 
 [[nodiscard]] StepResult Cpu8080::step() {
-	const OpcodeInfo& current_instruction = kOpcodeTable[memory_.read(state_.pc)];
-	auto opcode = current_instruction.hex;
+	const auto opcode = fetchByte();
+	const OpcodeInfo& current_instruction = kOpcodeTable[opcode];
 	StepResult step_result;
 	step_result.address = state_.pc;
 	step_result.opcode = opcode;
 	bool alternate_timing_taken = false;
   
   if ((opcode & 0xC7) == 0x00){
-    //This mask represents the NOP instructions
+	// 0x00 plus the undocumented NOP masks
     executeNOP();
-    state_.pc++;
   }
   else if ((opcode & 0xC7) == 0x04){
-		//This mask represents the INR instructions
 		auto reg = decodeRegister((opcode >> 3) & 0x07);
 		executeINR(reg);
-		state_.pc++;
 	}
   else if ((opcode & 0xCF) == 0x03) {
-    //This mask represents the INX instructions
-    auto reg = decodeRegisterPair(opcode);
-    executeINX(reg);
-    state_.pc++;
+	auto reg = decodeRegisterPair(opcode);
+	executeINX(reg);
   }
   else if ((opcode & 0xC0) == 0x40 && opcode != 0x76){
-    //This mask represents the MOV instructions
     auto dst = decodeRegister((opcode >> 3) & 0x07);
     auto src = decodeRegister((opcode & 0x07));
     executeMOV(dst, src);
-    state_.pc++;
   }
   else if ((opcode & 0xC7) == 0x05){
     //This mask represents the DCR instructions
@@ -146,6 +139,18 @@
 	this->tstates_ += t_states;
 	step_result.tStates = t_states;
 	return step_result;
+}
+
+[[nodiscard]]
+std::uint8_t Cpu8080::fetchByte() noexcept {
+	return memory_.read(state_.pc++);
+}
+
+[[nodiscard]]
+std::uint16_t Cpu8080::fetchWord() noexcept {
+	const auto lo = fetchByte();
+	const auto hi = fetchByte();
+	return static_cast<uint16_t>((hi << 8) | lo);
 }
 
 [[nodiscard]]

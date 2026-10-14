@@ -18,7 +18,7 @@ struct StepResult {
 // 	A, B, C, D, E, L, H, and M.
 // 	M is the pseudo-register defined by the HL register pair
 // 	These registers are mapped to an integer as defined by the 8080 hardware spec.
-enum Register : std::uint8_t {
+enum class Register : std::uint8_t {
 	B = 0,
 	C = 1,
 	D = 2,
@@ -80,8 +80,13 @@ private:
 	void executeHLT() const noexcept;
 	void executeINR(Register reg) noexcept;
 	void executeINX(RegisterPair reg) noexcept;
-  void executeMOV(Register dst, Register src) noexcept;
+  	void executeMOV(Register dst, Register src) noexcept;
 	
+	[[nodiscard]]
+		std::uint8_t Cpu8080::fetchByte() noexcept;
+	[[nodiscard]]
+		std::uint16_t Cpu8080::fetchWord() noexcept;
+
 	[[nodiscard]]
 	std::uint8_t readRegister(Register reg) const noexcept;
 	void writeRegister(Register reg, std::uint8_t value) noexcept;
@@ -103,7 +108,7 @@ private:
   }
 
   [[nodiscard]]
-    static bool shouldSetZero(std::uint8_t value) noexcept;
+	static bool shouldSetZero(std::uint8_t value) noexcept;
   [[nodiscard]]
     static bool shouldSetSign(std::uint8_t value) noexcept;
   [[nodiscard]]
