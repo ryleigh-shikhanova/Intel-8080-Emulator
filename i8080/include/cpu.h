@@ -76,44 +76,42 @@ private:
 	CpuState& state_;
 	Memory& memory_;
 	std::uint64_t tstates_{0};
-	void executeNOP() const noexcept;
-	void executeHLT() const noexcept;
-	void executeINR(Register reg) noexcept;
-	void executeINX(RegisterPair reg) noexcept;
-  	void executeMOV(Register dst, Register src) noexcept;
-	
-	[[nodiscard]]
-		std::uint8_t Cpu8080::fetchByte() noexcept;
-	[[nodiscard]]
-		std::uint16_t Cpu8080::fetchWord() noexcept;
 
-	[[nodiscard]]
-	std::uint8_t readRegister(Register reg) const noexcept;
+	// instruction fetching
+	[[nodiscard]] std::uint8_t fetchByte() noexcept;
+	[[nodiscard]] std::uint16_t fetchWord() noexcept;
+
+	//register access 
+	[[nodiscard]] std::uint8_t readRegister(Register reg) const noexcept;
 	void writeRegister(Register reg, std::uint8_t value) noexcept;
 
-	[[nodiscard]]
-	std::uint16_t readRegisterPair(RegisterPair pair) const noexcept;
+	[[nodiscard]] std::uint16_t readRegisterPair(RegisterPair pair) const noexcept;
 	void writeRegisterPair(RegisterPair pair, std::uint16_t value) noexcept;
 
-	[[nodiscard]]
-	constexpr Register decodeRegister(std::uint8_t opcode) noexcept
+	// instruction decoding
+	[[nodiscard]] constexpr Register decodeRegister(std::uint8_t opcode) noexcept
 	{
 		return static_cast<Register>(opcode & 0x07);
 	}
 
-  [[nodiscard]]
-  constexpr RegisterPair decodeRegisterPair(std::uint8_t opcode) noexcept
-  {
-    return static_cast<RegisterPair>((opcode & 0x30) >> 4);
-  }
+	[[nodiscard]] constexpr RegisterPair decodeRegisterPair(std::uint8_t opcode) noexcept
+	{
+	return static_cast<RegisterPair>((opcode & 0x30) >> 4);
+	}
 
-  [[nodiscard]]
-	static bool shouldSetZero(std::uint8_t value) noexcept;
-  [[nodiscard]]
-    static bool shouldSetSign(std::uint8_t value) noexcept;
-  [[nodiscard]]
-    static bool shouldSetParity(std::uint8_t value) noexcept;
-  void updateSZPFlags(std::uint8_t value) noexcept;
+	//flag helpers
+	[[nodiscard]] static bool shouldSetZero(std::uint8_t value) noexcept;
+	[[nodiscard]] static bool shouldSetSign(std::uint8_t value) noexcept;
+	[[nodiscard]] static bool shouldSetParity(std::uint8_t value) noexcept;
+
+	void updateSZPFlags(std::uint8_t value) noexcept;
+
+	// Instruction handlers
+	void executeNOP() const noexcept;
+	void executeHLT() const noexcept;
+	void executeINR(Register reg) noexcept;
+	void executeINX(RegisterPair reg) noexcept;
+	void executeMOV(Register dst, Register src) noexcept;
 };
 
 #endif
