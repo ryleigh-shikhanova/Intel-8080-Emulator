@@ -7,6 +7,8 @@
 #include "memory.h"
 #include "i8080_opcode_table.h"
 
+//#define WORD_DST_MASK (opcode >> )
+//#define WORD_SRC_MASK
 // Used to group the executed opcode along with it's t-states
 struct StepResult {
 	std::uint16_t address{};
@@ -112,6 +114,9 @@ private:
 	void executeINR(Register reg) noexcept;
 	void executeINX(RegisterPair reg) noexcept;
 	void executeMOV(Register dst, Register src) noexcept;
+	void executeDCR(Register dst) noexcept;
+	void executeDCX(RegisterPair dst) noexcept;
+
 };
 
 #endif
