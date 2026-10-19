@@ -3,10 +3,12 @@
 #include <stdexcept>
 
 [[nodiscard]] StepResult Cpu8080::step() {
+	const auto addr = state_.pc;
 	const auto opcode = fetchByte();
 	const OpcodeInfo& current_instruction = kOpcodeTable[opcode];
+
 	StepResult step_result;
-	step_result.address = state_.pc;
+	step_result.address = addr;
 	step_result.opcode = opcode;
 	bool alternate_timing_taken = false;
 
@@ -15,7 +17,7 @@
 		executeNOP();
 	}
 	else if ((opcode & 0xC7) == 0x04) {
-		auto reg = decodeRegister((opcode >> 3) & 0x07);
+		auto reg = decodeRegister(opcode >> 3);
 		executeINR(reg);
 	}
 	else if ((opcode & 0xCF) == 0x03) {
@@ -36,8 +38,9 @@
 		executeDCX(dst);
 	}
 	else if ((opcode & 0xC7) == 0x06) {
-		//This mask represents the MVI instructions
-		throw std::runtime_error("MVI not implemented");
+		auto dst = decodeRegister(opcode >> 3);
+		auto data = fetchByte();
+		executeMVI(dst, data);
 	}
 	else if ((opcode & 0xCF) == 0x01) {
 		//This mask represents the LXI instructions
@@ -58,6 +61,7 @@
 	else if ((opcode & 0xC0) == 0x80) {
 		//This mask represents the register ALU instructions:
 		//  ADD, ADC, SUB, SBB, ANA, XRA, ORA, CMP
+		//executeALU(op, reg, val);
 		//  bits 5-3 select the operation, bits 2-0 select the source register
 		throw std::runtime_error("ALU register instructions not implemented");
 	}
@@ -99,7 +103,6 @@
 		switch (opcode) {
 			case 0x76:	//HLT
 				executeHLT();
-				state_.pc++;
 				break;
 			case 0x07:	//RLC
 			case 0x0F:	//RRC
@@ -352,3 +355,33 @@ void Cpu8080::executeDCX(RegisterPair dst) noexcept {
 	value--;
 	writeRegisterPair(dst, value);
 }
+
+void Cpu8080::executeMVI(Register dst, uint8_t data) noexcept {
+	writeRegister(dst, data);
+}
+
+void Cpu8080::executeALU(AluOp op, Register reg, uint8_t val) noexcept {
+	switch (op) {
+		case AluOp::ADD:
+			break;
+		case AluOp::ADC:
+			break;
+		case AluOp::SUB:
+			break;
+		case AluOp::SBB:
+			break;
+		case AluOp::ANA:
+			break;
+		case AluOp::XRA:
+			break;
+		case AluOp::ORA:
+			break;
+		case AluOp::CMP:
+			break;
+	}
+	//update accum
+}
+
+//do an add helper
+
+//do a sub helper

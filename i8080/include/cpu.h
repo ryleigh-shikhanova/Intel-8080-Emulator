@@ -7,8 +7,6 @@
 #include "memory.h"
 #include "i8080_opcode_table.h"
 
-//#define WORD_DST_MASK (opcode >> )
-//#define WORD_SRC_MASK
 // Used to group the executed opcode along with it's t-states
 struct StepResult {
 	std::uint16_t address{};
@@ -47,6 +45,17 @@ enum class StackPair : std::uint8_t {
 	DE  = 1,
 	HL  = 2,
 	PSW = 3
+};
+
+enum class AluOp : std::uint8_t {
+	ADD = 0,
+	ADC = 1,
+	SUB = 2,
+	SBB = 3,
+	ANA = 4,
+	XRA = 5,
+	ORA = 6,
+	CMP = 7
 };
 
 class Cpu8080 {
@@ -116,7 +125,8 @@ private:
 	void executeMOV(Register dst, Register src) noexcept;
 	void executeDCR(Register dst) noexcept;
 	void executeDCX(RegisterPair dst) noexcept;
-
+	void executeMVI(Register dst, uint8_t data) noexcept;
+	void executeALU(AluOp op, Register reg, uint8_t val) noexcept;
 };
 
 #endif
