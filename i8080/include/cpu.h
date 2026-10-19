@@ -110,6 +110,7 @@ private:
 	return static_cast<RegisterPair>((opcode & 0x30) >> 4);
 	}
 
+
 	//flag helpers
 	[[nodiscard]] static bool shouldSetZero(std::uint8_t value) noexcept;
 	[[nodiscard]] static bool shouldSetSign(std::uint8_t value) noexcept;
@@ -119,14 +120,19 @@ private:
 
 	// Instruction handlers
 	void executeNOP() const noexcept;
-	void executeHLT() const noexcept;
+	void executeHLT() noexcept;
 	void executeINR(Register reg) noexcept;
 	void executeINX(RegisterPair reg) noexcept;
 	void executeMOV(Register dst, Register src) noexcept;
 	void executeDCR(Register dst) noexcept;
 	void executeDCX(RegisterPair dst) noexcept;
-	void executeMVI(Register dst, uint8_t data) noexcept;
-	void executeALU(AluOp op, Register reg, uint8_t val) noexcept;
+	void executeMVI(Register dst, std::uint8_t data) noexcept;
+	void executeLXI(RegisterPair dst, std::uint16_t val) noexcept;
+	void executeALU(AluOp op, std::uint8_t val) noexcept;
+
+	// Alu helpers
+	std::uint8_t addByte(std::uint8_t a, std::uint8_t value, bool carry) noexcept;
+	std::uint8_t subByte(std::uint8_t a, std::uint8_t value, bool borrow) noexcept;
 };
 
 #endif

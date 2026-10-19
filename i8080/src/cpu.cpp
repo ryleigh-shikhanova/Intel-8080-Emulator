@@ -39,12 +39,11 @@
 	}
 	else if ((opcode & 0xC7) == 0x06) {
 		auto dst = decodeRegister(opcode >> 3);
-		auto data = fetchByte();
-		executeMVI(dst, data);
+		executeMVI(dst, fetchByte());
 	}
 	else if ((opcode & 0xCF) == 0x01) {
-		//This mask represents the LXI instructions
-		throw std::runtime_error("LXI not implemented");
+		auto dst = decodeRegisterPair(opcode);
+		executeLXI(dst, fetchWord());
 	}
 	else if ((opcode & 0xCF) == 0x09) {
 		//This mask represents the DAD instructions
@@ -59,17 +58,14 @@
 		throw std::runtime_error("LDAX not implemented");
 	}
 	else if ((opcode & 0xC0) == 0x80) {
-		//This mask represents the register ALU instructions:
-		//  ADD, ADC, SUB, SBB, ANA, XRA, ORA, CMP
-		//executeALU(op, reg, val);
-		//  bits 5-3 select the operation, bits 2-0 select the source register
-		throw std::runtime_error("ALU register instructions not implemented");
+		auto op = static_cast<AluOp>((opcode >> 3) & 0x07);
+		auto val = readRegister(decodeRegister(opcode));
+		executeALU(op, val);
 	}
 	else if ((opcode & 0xC7) == 0xC6) {
-		//This mask represents the immediate ALU instructions:
-		//  ADI, ACI, SUI, SBI, ANI, XRI, ORI, CPI
-		//  bits 5-3 select the operation
-		throw std::runtime_error("ALU immediate instructions not implemented");
+		auto op = static_cast<AluOp>((opcode >> 3) & 0x07);
+		auto val = fetchByte();
+		executeALU(op, val);
 	}
 	else if ((opcode & 0xC7) == 0xC0) {
 		//This mask represents the conditional return instructions (Rcc)
@@ -319,7 +315,7 @@ void Cpu8080::executeNOP() const noexcept {
 	//  write to the log
 }
 
-void Cpu8080::executeHLT() const noexcept {
+void Cpu8080::executeHLT() noexcept {
 	state_.halted = true;
 }
 
@@ -356,19 +352,28 @@ void Cpu8080::executeDCX(RegisterPair dst) noexcept {
 	writeRegisterPair(dst, value);
 }
 
-void Cpu8080::executeMVI(Register dst, uint8_t data) noexcept {
+void Cpu8080::executeMVI(Register dst, std::uint8_t data) noexcept {
 	writeRegister(dst, data);
 }
 
-void Cpu8080::executeALU(AluOp op, Register reg, uint8_t val) noexcept {
+void Cpu8080::executeLXI(RegisterPair dst, std::uint16_t val) noexcept {
+	writeRegisterPair(dst , val);
+}
+
+void Cpu8080::executeALU(AluOp op, std::uint8_t val) noexcept {
+	auto accum = readRegister(Register::A);
 	switch (op) {
 		case AluOp::ADD:
+			accum = addByte(accum, val, false);
 			break;
 		case AluOp::ADC:
+			accum = addByte(accum, val, isFlagSet(Flag::Carry));
 			break;
 		case AluOp::SUB:
+			accum = subByte(accum, val, false);
 			break;
 		case AluOp::SBB:
+			accum = subByte(accum, val, isFlagSet(Flag::Carry));
 			break;
 		case AluOp::ANA:
 			break;
@@ -379,9 +384,25 @@ void Cpu8080::executeALU(AluOp op, Register reg, uint8_t val) noexcept {
 		case AluOp::CMP:
 			break;
 	}
-	//update accum
+	writeRegister(Register::A, accum);
 }
 
-//do an add helper
+std::uint8_t Cpu8080::addByte(std::uint8_t a, std::uint8_t value, bool carry) noexcept
+{
+	const unsigned s = a + value + carry;
+	setFlag(Flag::Carry, s > 0xFF);
+	//do aux carry flag
+	const auto res = static_cast<std::uint8_t>(s);
+	updateSZPFlags(res);
+	return res;
+}
 
-//do a sub helper
+std::uint8_t Cpu8080::subByte(std::uint8_t a, std::uint8_t value, bool borrow) noexcept
+{
+	const unsigned s = a - value - borrow;
+	setFlag(Flag::Carry, s > 0xFF);		//since it's unsigned, it'll wrap if it goes neg
+	//do aux carry flag
+	const auto res = static_cast<std::uint8_t>(s);
+	updateSZPFlags(res);
+	return res;
+}

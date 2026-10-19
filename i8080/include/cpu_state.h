@@ -3,8 +3,6 @@
 
 /*
  * Mutable archietectural state of an Intel 8080 CPU.
- *
- * Memory and I/O devices are owned seperately from the CPU state.
  */
 #include <cstdint>
 
