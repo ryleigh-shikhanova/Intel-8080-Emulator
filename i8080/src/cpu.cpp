@@ -376,12 +376,16 @@ void Cpu8080::executeALU(AluOp op, std::uint8_t val) noexcept {
 			accum = subByte(accum, val, isFlagSet(Flag::Carry));
 			break;
 		case AluOp::ANA:
+			accum &= val;
 			break;
 		case AluOp::XRA:
+			accum ^= val;
 			break;
 		case AluOp::ORA:
+			accum |= val;
 			break;
 		case AluOp::CMP:
+			subByte(accum, val, false);
 			break;
 	}
 	writeRegister(Register::A, accum);
